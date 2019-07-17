@@ -1,6 +1,10 @@
 #! /bin/sh
 
 TMP_DIAG=$(mktemp -p /tmp KERNEL-RM-XXXXXX)
+if [ -z $LINES ]; then
+  echo no lines?
+  LINES=20
+fi
 
 die () {
   rm -f ${TMP_DIAG}
@@ -37,7 +41,7 @@ for k in $ks; do
   to_rm_l+=" "
   to_rm_l+=$(find /usr/src -maxdepth 1 -iname "linux-$k*")
   echo $to_rm_l | tr ' ' '\n' | sort
-  echo 
+  echo
   to_rm+="${to_rm_l} "
 done
 
