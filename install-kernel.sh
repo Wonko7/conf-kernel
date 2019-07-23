@@ -4,6 +4,7 @@ die () {
   exit 4
 }
 
+HOST=$(hostname)
 eselect kernel list
 curr_kr=$(make kernelrelease)
 curr_kv=linux-$(make kernelversion)
@@ -27,6 +28,9 @@ if [[ ! ( "$ans" = "" || "$ans" = yes || "$ans" = y ) ]]; then
 fi
 
 eselect kernel set $latest_kv
+
+cp .config /home/wjc/conf/kernel-config/$HOST/config-$curr_kr
+chown wjc:wjc /home/wjc/conf/kernel-config/$HOST/config-$curr_kr
 
 mount /boot
 #chmod og+rX -R /usr/src/linux
