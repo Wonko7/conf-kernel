@@ -39,6 +39,13 @@ emerge @module-rebuild               || die
 dracut --hostonly '' $curr_kr        || die
 grub-mkconfig -o /boot/grub/grub.cfg || die
 
+# FIXME nostromo!
 echo you might want to update firmware:
-echo 'nostromo: tart $tree/distfiles/linux-firmware-20170622.tar.gz | ack "iwlwifi-7265D|i915/" | sed -re "s:^.*linux-firmware[^/]*/::g" -e "s/ ->.*//g" | sudo tee $portage/savedconfig/sys-kernel/linux-firmware'
-echo 'yggdrasill: tart $tree/distfiles/linux-firmware-20181026.tar.gz | sed -nre "/(i915|ath10k|qca)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }" | sudo tee $portage/savedconfig/sys-kernel/linux-firmware'
+case $HOST in
+  daban-urnud)
+    echo 'tart $tree/distfiles/linux-firmware-20170622.tar.gz | sed -nre "/(iwlwifi-7265D|i915)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }" | sudo tee $portage/savedconfig/sys-kernel/linux-firmware && emerge -1 linux-firmware'
+    ;;
+  yggdrasill)
+    echo 'tart $tree/distfiles/linux-firmware-20181026.tar.gz | sed -nre "/(i915|ath10k|qca)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }" | sudo tee $portage/savedconfig/sys-kernel/linux-firmware && emerge -1 linux-firmware'
+    ;;
+esac
