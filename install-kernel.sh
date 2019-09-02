@@ -35,6 +35,9 @@ fm_file=$(ls -1 /usr/portage/distfiles/linux-firmware-* | sort | tail -n 1)
 
 # FIXME nostromo!
 case $HOST in
+  nostromo)
+    firmware='iwlwifi-6000'
+    ;;
   daban-urnud)
     firmware='iwlwifi-7265D|i915'
     #echo 'tart $tree/distfiles/linux-firmware-20170622.tar.gz | sed -nre "/(iwlwifi-7265D|i915)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }" | sudo tee $portage/savedconfig/sys-kernel/linux-firmware && emerge -1 linux-firmware'
@@ -50,23 +53,25 @@ read ans
 
 if [[ ( "$ans" = "" || "$ans" = yes || "$ans" = y ) ]]; then
   saved_config=/etc/portage/savedconfig/sys-kernel/linux-firmware
-  tart $fm_file | sed -nre "/($firmware)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }" | tee $saved_config
+  tar -tavf $fm_file                                                            \
+    | sed -nre "/($firmware)/ { s:^.*linux-firmware[^/]*/::g; s/ ->.*//g; p }"  \
+    | tee $saved_config                                           || die
   chown portage:portage $saved_config
-  emerge -1 linux-firmware           || die
+  emerge -1 linux-firmware                                        || die
 fi
 
 ################################# save config:
-cp .config /home/wjc/conf/kernel-config/$HOST/config-$curr_kr
-chown wjc:wjc /home/wjc/conf/kernel-config/$HOST/config-$curr_kr
+cp .config /home/wjc/conf/kernel-config/$HOST/config-$curr_kr     || die
+chown wjc:wjc /home/wjc/conf/kernel-config/$HOST/config-$curr_kr  || die
 
 mount /boot
 #chmod og+rX -R /usr/src/linux
 chown -RL portage:portage /usr/src/linux
-make modules_install                 || die
-make install                         || die
+make modules_install                                              || die
+make install                                                      || die
 
-emerge @module-rebuild               || die
+emerge @module-rebuild                                            || die
 #genkernel --install --no-ramdisk-modules --firmware initramfs
 #genkernel --install --firmware initramfs
-dracut --hostonly '' $curr_kr        || die
-grub-mkconfig -o /boot/grub/grub.cfg || die
+dracut --hostonly '' $curr_kr                                     || die
+grub-mkconfig -o /boot/grub/grub.cfg                              || die
