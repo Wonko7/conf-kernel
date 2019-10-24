@@ -13,7 +13,7 @@ die () {
 
 cd /usr/src
 
-ks=$(ls -d1 linux-* | sed -nre 's/^linux-(.*)-gentoo$/\1/p')
+ks=$(ls -d1 linux-* | sed -nre 's/^linux-(.*)-gentoo.*$/\1/p')
 nbks=$(echo $ks | wc -w)
 
 diag_list=""
@@ -35,11 +35,11 @@ echo This will remove:
 to_rm=""
 for k in $ks; do
   to_rm_l=""
-  to_rm_l+=$(find /boot -maxdepth 1 -iname "[^c]*${k}*" 2> /dev/null)
+  to_rm_l+=$(find /boot -maxdepth 1 -iname "[^c]*${k}-*" 2> /dev/null)
   to_rm_l+=" "
-  to_rm_l+=$(find /lib/modules -maxdepth 1 -iname "$k*")
+  to_rm_l+=$(find /lib/modules -maxdepth 1 -iname "$k-*")
   to_rm_l+=" "
-  to_rm_l+=$(find /usr/src -maxdepth 1 -iname "linux-$k*")
+  to_rm_l+=$(find /usr/src -maxdepth 1 -iname "linux-$k-*")
   echo $to_rm_l | tr ' ' '\n' | sort
   echo
   to_rm+="${to_rm_l} "
