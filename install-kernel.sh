@@ -28,8 +28,6 @@ if [[ ! ( "$ans" = "" || "$ans" = yes || "$ans" = y ) ]]; then
   exit 1
 fi
 
-eselect kernel set $latest_kv
-
 ################################# firmware:
 fm_file=$(ls -1 /usr/portage/distfiles/linux-firmware-* | sort | tail -n 1)
 
