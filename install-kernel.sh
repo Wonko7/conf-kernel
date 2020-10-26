@@ -17,7 +17,7 @@ if [ $latest_kv != $curr_kv ]; then
   exit 1
 fi
 
-eselect kernel set $latest_kv || die
+eselect kernel set $latest_kv || die # don't do that
 eselect kernel list
 
 echo "are you sure? ${curr_kr}?"
@@ -29,10 +29,13 @@ if [[ ! ( "$ans" = "" || "$ans" = yes || "$ans" = y ) ]]; then
 fi
 
 ################################# firmware:
-fm_file=$(ls -1 /usr/portage/distfiles/linux-firmware-* | sort | tail -n 1)
+fm_file=$(ls -1 /var/cache/distfiles/linux-firmware-* | sort | tail -n 1)
 
 # FIXME nostromo!
 case $HOST in
+  rocinante)
+    firmware='FIXME'
+    ;;
   nostromo)
     firmware='iwlwifi-6000'
     ;;
@@ -68,7 +71,10 @@ chown -RL portage:portage /usr/src/linux
 make modules_install                                              || die
 make install                                                      || die
 
-emerge @module-rebuild                                            || die
+# FIXME/TODO:
+# add hostname config for jobs & module rebuild, firmware.
+
+#emerge @module-rebuild                                            || die
 #genkernel --install --no-ramdisk-modules --firmware initramfs
 #genkernel --install --firmware initramfs
 dracut --hostonly '' $curr_kr                                     || die
